@@ -1,14 +1,6 @@
-name: Deploy to VM
-
-on:
-  push:
-    branches:
-      - main
-
 jobs:
   deploy:
-    runs-on: ubuntu-latest
-
+    runs-on: self-hosted
     steps:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
@@ -17,9 +9,10 @@ jobs:
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.VM_SSH_KEY }}
           script: |
-            cd /home/ubuntu/VERTESA
+            cd VERTESA
             git pull origin main
             docker stop vertesa-container || true
             docker rm vertesa-container || true
             docker build -t vertesa-app .
             docker run -d -p 80:80 --name vertesa-container vertesa-app
+s
