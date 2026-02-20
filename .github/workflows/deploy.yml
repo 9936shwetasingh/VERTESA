@@ -7,25 +7,30 @@ on:
 
 jobs:
   deploy:
-    runs-on: self-hosted   # Self-hosted runner use kar raha hai
+    runs-on: self-hosted
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.VM_HOST }}       # VM IP ya hostname
-          username: ${{ secrets.VM_USER }}   # VM username
-          key: ${{ secrets.VM_SSH_KEY }}     # Private SSH key (GitHub secret)
-          port: 22
-          script: |
-            cd /home/${{ secrets.VM_USER }}/VERTESA
-            git pull origin main
-            docker stop vertesa-container || true
-            docker rm vertesa-container || true
-            docker build -t vertesa-app .
-            docker run -d -p 80:80 --name vertesa-container vertesa-app
-          timeout: 30s
-          command_timeout: 10m
+      - name: Deploy Application
+        run: |
+          echo "Going to project directory..."
+          cd /home/ubuntu/VERTESA
+
+          echo "Pulling latest code..."
+          git pull origin main
+
+          echo "Stopping old container..."
+          docker stop vertesa-container || true
+
+          echo "Removing old container..."
+          docker rm vertesa-container || true
+
+          echo "Building new Docker image..."
+          docker build -t vertesa-app .
+
+          echo "Starting new container..."
+          docker run -d -p 80:80 --name vertesa-container vertesa-app
+
+          echo "Deployment Successful 🚀"
