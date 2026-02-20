@@ -31,6 +31,6 @@ jobs:
           docker build -t vertesa-app .
 
           echo "Starting new container..."
-          docker run -d -p 80:80 --name vertesa-container vertesa-app
+          docker run -d -p 3000:80 --name vertesa-container vertesa-app
 
           echo "Deployment Successful 🚀"
